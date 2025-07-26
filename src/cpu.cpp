@@ -103,3 +103,11 @@ setRegister(instr.rd, static_cast<uint32_t>(result));
             std::cerr << "Unsupported opcode: 0x" << std::hex << (int)instr.opcode << "\n";
     }
 }
+
+void CPU::step() {
+    uint32_t rawInstr = fetch();
+    std::cout << "PC: 0x" << std::hex << pc - 4
+              << " | Raw: 0x" << std::hex << rawInstr << "\n";
+    Instruction instr = decode(rawInstr);
+    execute(instr);
+}

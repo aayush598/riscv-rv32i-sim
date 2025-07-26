@@ -26,7 +26,9 @@ public:
     Instruction decode(uint32_t rawInstr);
 
     void execute(const Instruction& instr);
-
+    
+    void step();             // Execute one instruction
+    
 
 private:
     std::array<uint32_t, 32> regs;
