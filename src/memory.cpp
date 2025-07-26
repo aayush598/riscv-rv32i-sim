@@ -1,4 +1,6 @@
 #include "memory.h"
+#include <iostream>
+#include <iomanip>    
 
 Memory::Memory(std::size_t size) : mem(size, 0), mem_size(size) {}
 
@@ -38,4 +40,15 @@ void Memory::loadProgram(const std::vector<uint8_t>& data, uint32_t startAddr) {
         throw std::out_of_range("Program size exceeds memory bounds");
 
     std::copy(data.begin(), data.end(), mem.begin() + startAddr);
+}
+
+void Memory::dumpMemory(uint32_t start, uint32_t end) const {
+    if (start >= mem_size || end > mem_size || start > end)
+        throw std::out_of_range("Invalid memory dump range");
+
+    std::cout << "\n==== MEMORY DUMP ====\n";
+    for (uint32_t addr = start; addr < end; addr += 4) {
+        std::cout << "0x" << std::hex << std::setw(8) << std::setfill('0') << addr
+                  << ": 0x" << std::setw(8) << std::setfill('0') << read32(addr) << "\n";
+    }
 }

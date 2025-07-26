@@ -1,31 +1,34 @@
 #include "cpu.h"
 #include "memory.h"
-#include <fstream>
+#include <vector>
 #include <iostream>
 
-std::vector<uint8_t> loadBinaryFile(const std::string& path) {
-    std::ifstream file(path, std::ios::binary);
-    if (!file) throw std::runtime_error("Failed to open binary file");
-
-    return std::vector<uint8_t>(std::istreambuf_iterator<char>(file), {});
-}
-
 int main() {
-    constexpr uint32_t MEM_SIZE = 1 << 20;        // 1 MB
-    constexpr uint32_t START_ADDR = 0x10000;      // Match RARS base
-
-    Memory mem(MEM_SIZE);
-    std::vector<uint8_t> program = loadBinaryFile("../test_programs/add_test.bin");
-    mem.loadProgram(program, START_ADDR);
-
+    Memory mem(1024); // 1 KB memory
     CPU cpu(mem);
-    cpu.setPC(START_ADDR);
 
-    std::cout << "Instruction Fetch Test:\n";
-    for (size_t i = 0; i < program.size(); i += 4) {
-        uint32_t instr = cpu.fetch();
-        std::cout << "Fetched 0x" << std::hex << instr << "\n";
-    }
+    // Manually write a small program (or fake binary) to memory
+    std::vector<uint8_t> testProgram = {
+        0x93, 0x00, 0x10, 0x00,   // addi x1, x0, 1
+        0x13, 0x01, 0x11, 0x00,   // addi x2, x2, 1
+    };
+
+    mem.loadProgram(testProgram, 0); // Load program at address 0x00
+
+    // Simulate a few fetches (no decode/exec yet)
+    uint32_t instr1 = cpu.fetch();
+    uint32_t instr2 = cpu.fetch();
+
+    std::cout << "\nFetched Instructions:\n";
+    std::cout << "Instr1: 0x" << std::hex << instr1 << "\n";
+    std::cout << "Instr2: 0x" << std::hex << instr2 << "\n";
+
+    // Update some registers manually to simulate execution effect
+    cpu.setRegister(1, 0x12345678);
+    cpu.setRegister(2, 0xAABBCCDD);
+
+    cpu.printRegisters();
+    mem.dumpMemory(0, 16); // Dump first 16 bytes
 
     return 0;
 }

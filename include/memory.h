@@ -17,6 +17,9 @@ public:
 
     void loadProgram(const std::vector<uint8_t>& data, uint32_t startAddr);
 
+    void dumpMemory(uint32_t start, uint32_t end) const;
+
+
 private:
     std::vector<uint8_t> mem;
     std::size_t mem_size;

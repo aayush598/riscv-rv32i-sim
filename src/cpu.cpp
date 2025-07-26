@@ -33,7 +33,7 @@ void CPU::setPC(uint32_t value) {
 void CPU::printRegisters() const {
     std::cout << "\n==== REGISTER FILE ====\n";
     for (int i = 0; i < 32; i++) {
-        std::cout << "x" << std::setw(2) << std::left << i << ": 0x"
+        std::cout << "x" << std::dec << std::setw(2) << std::left << i << ": 0x"
                   << std::hex << std::setw(8) << std::setfill('0') << regs[i];
         if ((i + 1) % 4 == 0) std::cout << "\n";
         else std::cout << "  ";
