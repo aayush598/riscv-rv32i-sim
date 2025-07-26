@@ -16,4 +16,4 @@ make
 echo "🚀 Build completed."
 
 # Run the simulator with optional argument
-./riscv_rv32i_sim ../bin/add_test.bin
+./riscv_rv32i_sim

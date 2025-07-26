@@ -1,32 +1,30 @@
-#include <iostream>
 #include "cpu.h"
 #include "memory.h"
-#include "loader.h"
+#include <fstream>
+#include <iostream>
 
-int main(int argc, char* argv[]) {
-    if (argc != 2) {
-        std::cerr << "Usage: ./riscv_sim <binary_file>\n";
-        return 1;
-    }
+std::vector<uint8_t> loadBinaryFile(const std::string& path) {
+    std::ifstream file(path, std::ios::binary);
+    if (!file) throw std::runtime_error("Failed to open binary file");
 
-    const std::string binFile = argv[1];
-    const uint32_t baseAddress = 0x00010000;
+    return std::vector<uint8_t>(std::istreambuf_iterator<char>(file), {});
+}
 
-    Memory mem(1024 * 1024); // 1 MB
-    CPU cpu;
+int main() {
+    constexpr uint32_t MEM_SIZE = 1 << 20;        // 1 MB
+    constexpr uint32_t START_ADDR = 0x10000;      // Match RARS base
 
-    try {
-        std::vector<uint8_t> program = Loader::loadBinaryFile(binFile);
-        mem.loadProgram(program, baseAddress);
-        cpu.setPC(baseAddress);
+    Memory mem(MEM_SIZE);
+    std::vector<uint8_t> program = loadBinaryFile("../test_programs/add_test.bin");
+    mem.loadProgram(program, START_ADDR);
 
-        std::cout << "[+] Loaded binary: " << binFile << "\n";
-        std::cout << "[+] PC initialized to: 0x" << std::hex << cpu.getPC() << "\n";
-        std::cout << "[+] Program size: " << std::dec << program.size() << " bytes\n";
+    CPU cpu(mem);
+    cpu.setPC(START_ADDR);
 
-    } catch (const std::exception& e) {
-        std::cerr << "[!] Error: " << e.what() << "\n";
-        return 1;
+    std::cout << "Instruction Fetch Test:\n";
+    for (size_t i = 0; i < program.size(); i += 4) {
+        uint32_t instr = cpu.fetch();
+        std::cout << "Fetched 0x" << std::hex << instr << "\n";
     }
 
     return 0;

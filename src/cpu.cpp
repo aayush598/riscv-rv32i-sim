@@ -1,8 +1,9 @@
 #include "cpu.h"
+#include "memory.h"
 #include <iostream>
 #include <iomanip>
 
-CPU::CPU() {
+CPU::CPU(Memory& mem) : memory(mem) {
     reset();
 }
 
@@ -38,4 +39,10 @@ void CPU::printRegisters() const {
         else std::cout << "  ";
     }
     std::cout << "PC : 0x" << std::hex << pc << "\n";
+}
+
+uint32_t CPU::fetch() {
+    uint32_t instr = memory.read32(pc); // Fetch 32-bit instruction
+    pc += 4;                             // Advance PC (default for RISC-V)
+    return instr;
 }
