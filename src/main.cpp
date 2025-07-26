@@ -1,20 +1,22 @@
 #include <iostream>
 #include "cpu.h"
+#include "memory.h"
 
 int main() {
-    CPU cpu;
+    Memory mem(1024 * 1024); // 1 MB
 
-    cpu.reset();
-    std::cout << "After reset:\n";
-    cpu.printRegisters();
+    // Test: write and read back 32-bit value
+    mem.write32(100, 0xDEADBEEF);
+    uint32_t val = mem.read32(100);
 
-    std::cout << "\nSetting x1 = 0x12345678\n";
-    cpu.setRegister(1, 0x12345678);
-    cpu.printRegisters();
+    std::cout << "Written: 0xDEADBEEF, Read: 0x" << std::hex << val << "\n";
 
-    std::cout << "\nTrying to set x0 = 0xFFFFFFFF (should remain 0)\n";
-    cpu.setRegister(0, 0xFFFFFFFF);
-    cpu.printRegisters();
+    // Bounds check
+    try {
+        mem.write8(1024 * 1024 + 1, 0xFF);
+    } catch (const std::exception& e) {
+        std::cout << "Caught expected exception: " << e.what() << "\n";
+    }
 
     return 0;
 }

@@ -7,4 +7,4 @@ include_directories(include)
 
 file(GLOB SOURCES "src/*.cpp")
 
-add_executable(riscv_sim ${SOURCES})
+add_executable(riscv_rv32i_sim ${SOURCES})
