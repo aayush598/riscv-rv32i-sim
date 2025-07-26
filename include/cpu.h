@@ -19,6 +19,9 @@ public:
 
     uint32_t fetch();  // 👈 Fetch instruction from memory
 
+    void run(uint32_t numInstructions);  // Run for N instructions (no decode/exec)
+
+
 private:
     std::array<uint32_t, 32> regs;
     uint32_t pc;

@@ -46,3 +46,20 @@ uint32_t CPU::fetch() {
     pc += 4;                             // Advance PC (default for RISC-V)
     return instr;
 }
+
+void CPU::run(uint32_t numInstructions) {
+    std::cout << "\n==== BEGIN FETCH LOOP ====\n";
+
+    for (uint32_t i = 0; i < numInstructions; ++i) {
+        try {
+            uint32_t instr = fetch();
+            std::cout << "PC: 0x" << std::hex << pc - 4
+                      << " | Instruction: 0x" << std::hex << instr << "\n";
+        } catch (const std::exception& e) {
+            std::cerr << "CPU halted: " << e.what() << "\n";
+            break;
+        }
+    }
+
+    std::cout << "==== END FETCH LOOP ====\n";
+}

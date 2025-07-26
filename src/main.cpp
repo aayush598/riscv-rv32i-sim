@@ -16,12 +16,8 @@ int main() {
     mem.loadProgram(testProgram, 0); // Load program at address 0x00
 
     // Simulate a few fetches (no decode/exec yet)
-    uint32_t instr1 = cpu.fetch();
-    uint32_t instr2 = cpu.fetch();
+    cpu.run(2); // Run 2 instructions (for now)
 
-    std::cout << "\nFetched Instructions:\n";
-    std::cout << "Instr1: 0x" << std::hex << instr1 << "\n";
-    std::cout << "Instr2: 0x" << std::hex << instr2 << "\n";
 
     // Update some registers manually to simulate execution effect
     cpu.setRegister(1, 0x12345678);
