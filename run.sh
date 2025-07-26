@@ -16,10 +16,4 @@ make
 echo "🚀 Build completed."
 
 # Run the simulator with optional argument
-if [ $# -eq 1 ]; then
-    echo "🏃 Running simulator with program: $1"
-    ./riscv_rv32i_sim "$1"
-else
-    echo "🏃 Running simulator without input binary."
-    ./riscv_rv32i_sim
-fi
+./riscv_rv32i_sim ../bin/add_test.bin
