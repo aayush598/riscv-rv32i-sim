@@ -1,5 +1,6 @@
 #include "cpu.h"
 #include "memory.h"
+#include "instruction.h"
 #include <iostream>
 #include <iomanip>
 
@@ -26,6 +27,7 @@ uint32_t CPU::getPC() const {
     return pc;
 }
 
+
 void CPU::setPC(uint32_t value) {
     pc = value;
 }
@@ -48,18 +50,53 @@ uint32_t CPU::fetch() {
 }
 
 void CPU::run(uint32_t numInstructions) {
-    std::cout << "\n==== BEGIN FETCH LOOP ====\n";
+    std::cout << "\n==== BEGIN FETCH-DECODE-EXECUTE LOOP ====\n";
 
     for (uint32_t i = 0; i < numInstructions; ++i) {
         try {
-            uint32_t instr = fetch();
+            uint32_t rawInstr = fetch();
             std::cout << "PC: 0x" << std::hex << pc - 4
-                      << " | Instruction: 0x" << std::hex << instr << "\n";
+                      << " | Raw: 0x" << std::hex << rawInstr << "\n";
+
+            Instruction instr = decode(rawInstr);
+            execute(instr);
+
         } catch (const std::exception& e) {
             std::cerr << "CPU halted: " << e.what() << "\n";
             break;
         }
     }
 
-    std::cout << "==== END FETCH LOOP ====\n";
+    std::cout << "==== END LOOP ====\n";
+}
+
+
+Instruction CPU::decode(uint32_t rawInstr) {
+    Instruction decoded(rawInstr); // just uses constructor logic
+    return decoded;
+}
+
+
+void CPU::execute(const Instruction& instr) {
+    switch (instr.opcode) {
+        case 0x13: { // I-type (e.g., ADDI, ANDI, ORI)
+            switch (instr.funct3) {
+                case 0x0: { // ADDI
+                    uint32_t result = regs[instr.rs1] + instr.imm;
+                    setRegister(instr.rd, result);
+                    std::cout << "Executed ADDI: x" << instr.rd
+                        << " = x" << instr.rs1 << " + " << instr.imm
+                        << " -> " << result << "\n";
+
+                    break;
+                }
+                default:
+                    std::cerr << "Unsupported I-type funct3: " << std::hex << (int)instr.funct3 << "\n";
+            }
+            break;
+        }
+
+        default:
+            std::cerr << "Unsupported opcode: 0x" << std::hex << (int)instr.opcode << "\n";
+    }
 }

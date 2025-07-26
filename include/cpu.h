@@ -3,6 +3,8 @@
 
 #include <cstdint>
 #include <array>
+#include "instruction.h"
+
 class Memory; // Forward declaration
 
 class CPU {
@@ -20,6 +22,10 @@ public:
     uint32_t fetch();  // 👈 Fetch instruction from memory
 
     void run(uint32_t numInstructions);  // Run for N instructions (no decode/exec)
+    
+    Instruction decode(uint32_t rawInstr);
+
+    void execute(const Instruction& instr);
 
 
 private:
