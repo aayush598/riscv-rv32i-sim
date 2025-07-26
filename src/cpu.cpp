@@ -82,8 +82,11 @@ void CPU::execute(const Instruction& instr) {
         case 0x13: { // I-type (e.g., ADDI, ANDI, ORI)
             switch (instr.funct3) {
                 case 0x0: { // ADDI
-                    uint32_t result = regs[instr.rs1] + instr.imm;
-                    setRegister(instr.rd, result);
+                    int32_t rs1_val = static_cast<int32_t>(regs[instr.rs1]);
+int32_t imm_val = static_cast<int32_t>(instr.imm);
+int32_t result = rs1_val + imm_val;
+setRegister(instr.rd, static_cast<uint32_t>(result));
+
                     std::cout << "Executed ADDI: x" << instr.rd
                         << " = x" << instr.rs1 << " + " << instr.imm
                         << " -> " << result << "\n";
